@@ -28,8 +28,8 @@ public class MenuController {
 	public ResponseEntity<Menu> menu(@PathVariable Long menuId) {
 		Menu menu = menuService.findMenu(menuId);
 
-		if (menu == null) return new ResponseEntity<Menu>(HttpStatus.NOT_FOUND);
+		if (menu == null) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 
-		return new ResponseEntity<Menu>(menu, HttpStatus.OK);
+		return new ResponseEntity<>(menu, HttpStatus.OK);
 	}
 }

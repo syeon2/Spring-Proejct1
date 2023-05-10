@@ -2,6 +2,7 @@ package play.project1.repository.menu;
 
 import static play.project1.domain.menu.Menu.*;
 
+import java.math.BigDecimal;
 import java.sql.PreparedStatement;
 import java.util.List;
 
@@ -40,7 +41,7 @@ public class MySQLMenuRepository implements MenuRepository {
 
 		long id = keyHolder.getKey().longValue();
 
-		return new Menu(id, menu.getName(), menu.getPrice(), menu.getMenuCode(), menu.getOrderCount());
+		return new Menu(id, menu.getName(), menu.getMenuCode(), menu.getPrice(), menu.getTotalOrder());
 	}
 
 	@Override
@@ -75,11 +76,11 @@ public class MySQLMenuRepository implements MenuRepository {
 		return ((rs, rowNum) -> {
 			Long id = rs.getLong(ID);
 			String name = rs.getString(NAME);
-			int price = rs.getInt(PRICE);
-			int menuCode = rs.getInt(MENU_CODE);
-			int orderCount = rs.getInt(ORDER_COUNT);
+			BigDecimal price = rs.getBigDecimal(PRICE);
+			Integer menuCode = rs.getInt(MENU_CODE);
+			Long totalOrder = rs.getLong(TOTAL_ORDER);
 
-			return new Menu(id, name, price, menuCode, orderCount);
+			return new Menu(id, name, menuCode, price, totalOrder);
 		});
 	}
 }

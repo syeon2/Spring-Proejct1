@@ -3,6 +3,7 @@ package play.project1.menu;
 import static org.assertj.core.api.Assertions.*;
 import static play.project1.domain.menu.Category.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.junit.jupiter.api.DisplayName;
@@ -29,7 +30,7 @@ class MySqlMenuRepositoryTest {
 	void saveAndFind() {
 		// given
 		String MENU_A = "menuA";
-		Menu menuA = new Menu(sequence++, MENU_A, 10000, COFFEE.getMenuCode(), 0);
+		Menu menuA = new Menu(sequence++, MENU_A, COFFEE.getMenuCode(), BigDecimal.valueOf(10000), 0L);
 
 		// // when
 		repository.save(menuA);
@@ -38,9 +39,9 @@ class MySqlMenuRepositoryTest {
 		assertThat(menu.getName()).isEqualTo(MENU_A);
 
 		String updateMenuName = "menuB";
-		repository.update(menu.getId(), new MenuDTO(updateMenuName, 20000, COFFEE.getMenuCode(), 0));
+		repository.update(menu.getId(), new MenuDTO(updateMenuName, BigDecimal.valueOf(20000), COFFEE.getMenuCode(), 0L));
 		Menu updateMenu = repository.findByName(updateMenuName).get(0);
-		assertThat(updateMenu.getPrice()).isEqualTo(20000);
+		assertThat(updateMenu.getPrice().intValue()).isEqualTo(20000);
 
 		// then
 		assertThat(updateMenu.getName()).isEqualTo(updateMenuName);

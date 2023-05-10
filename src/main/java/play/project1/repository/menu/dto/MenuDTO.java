@@ -1,5 +1,7 @@
 package play.project1.repository.menu.dto;
 
+import java.math.BigDecimal;
+
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -8,7 +10,7 @@ import lombok.RequiredArgsConstructor;
 public class MenuDTO {
 
 	private final String name;
-	private final int price;
-	private final int menuCode;
-	private final int orderCount;
+	private final BigDecimal price;
+	private final Integer menuCode;
+	private final Long totalOrder;
 }
