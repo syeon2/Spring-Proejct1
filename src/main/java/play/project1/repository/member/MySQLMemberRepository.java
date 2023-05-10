@@ -26,45 +26,36 @@ public class MySQLMemberRepository implements MemberRepository {
 
 	@Override
 	public Member save(Member member) {
-		String sql = "insert into member(USER_ID, NAME) values (?, ?)";
+		String sql = "insert into member(id, name) values (?, ?)";
 
-		KeyHolder keyHolder = new GeneratedKeyHolder();
-		template.update((connection) -> {
-			PreparedStatement ps = connection.prepareStatement(sql, new String[] {ID});
-			ps.setString(1, member.getUserId());
-			ps.setString(2, member.getName());
+		template.update(sql, member.getId(), member.getName());
 
-			return ps;
-		}, keyHolder);
-
-		long id = keyHolder.getKey().longValue();
-		return new Member(id, member.getUserId(), member.getName(), member.getPoint());
+		return member;
 	}
 
 	@Override
-	public Member findById(Long id) {
+	public Member findById(String memberId) {
 		String sql = "select * from member where id = ?";
 
-		return template.queryForObject(sql, memberRowMapper(), id);
+		return template.queryForObject(sql, memberRowMapper(), memberId);
 	}
 
 	private RowMapper<Member> memberRowMapper() {
 		return ((rs, rowNum) -> new Member(
-			rs.getLong(ID),
-			rs.getString(USER_ID),
+			rs.getString(ID),
 			rs.getString(NAME),
 			rs.getBigDecimal(POINT)));
 	}
 
 	@Override
-	public void update(Long memberId, MemberDTO memberDTO) {
-		String sql = "update member set user_id = ?, name = ?, point = ? where id = ?";
+	public void update(String memberId, MemberDTO memberDTO) {
+		String sql = "update member set name = ?, point = ? where id = ?";
 
-		template.update(sql, memberDTO.getUserId(), memberDTO.getName(), memberDTO.getPoint(), memberId);
+		template.update(sql, memberDTO.getName(), memberDTO.getPoint(), memberId);
 	}
 
 	@Override
-	public void delete(Long memberId) {
+	public void delete(String memberId) {
 		String sql = "delete from member where id = ?";
 
 		template.update(sql, memberId);

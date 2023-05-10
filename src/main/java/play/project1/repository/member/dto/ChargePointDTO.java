@@ -7,8 +7,8 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public class MemberDTO {
+public class ChargePointDTO {
 
-	private final String name;
-	private final BigDecimal point;
+	private String id;
+	private BigDecimal point;
 }

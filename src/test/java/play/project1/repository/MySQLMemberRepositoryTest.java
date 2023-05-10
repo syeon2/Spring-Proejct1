@@ -24,18 +24,18 @@ class MySQLMemberRepositoryTest {
 	@Test
 	@DisplayName("회원 저장, 수정, 조회")
 	void CRUD() {
-		String userId = "hello@gmail.com";
-		Member member = new Member(1L, userId, "suyeon", BigDecimal.ONE);
+		String memberId = "hello@gmail.com";
+		Member member = new Member(memberId, "suyeon", BigDecimal.ZERO);
 
 		// save
 		repository.save(member);
 
 		// find
-		Member findMember = repository.findById(1L);
-		assertThat(member.getUserId()).isEqualTo(findMember.getUserId());
+		Member findMember = repository.findById(memberId);
+		assertThat(member.getId()).isEqualTo(findMember.getId());
 		//
 		// udpate
-		repository.update(member.getId(), new MemberDTO(userId, "suyeon", BigDecimal.valueOf(20000)));
+		repository.update(member.getId(), new MemberDTO(memberId, BigDecimal.valueOf(20000)));
 		Member updateMember = repository.findById(member.getId());
 		assertThat(updateMember.getPoint()).isEqualTo(BigDecimal.valueOf(20000));
 		//

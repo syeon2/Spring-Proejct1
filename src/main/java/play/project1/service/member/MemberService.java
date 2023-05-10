@@ -15,11 +15,11 @@ public class MemberService {
 
 	private final MemberRepository memberRepository;
 
-	public void chargePoint(Long id, BigDecimal point) {
-		Member findMember = memberRepository.findById(id);
+	public void chargePoint(String memberId, BigDecimal point) {
+		Member findMember = memberRepository.findById(memberId);
 
 		BigDecimal addedPoint = findMember.getPoint().add(point);
-		MemberDTO memberDTO = new MemberDTO(findMember.getUserId(), findMember.getName(), addedPoint);
+		MemberDTO memberDTO = new MemberDTO(findMember.getName(), addedPoint);
 
 		memberRepository.update(findMember.getId(), memberDTO);
 	}
