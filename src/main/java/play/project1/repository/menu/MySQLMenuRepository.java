@@ -60,9 +60,9 @@ public class MySQLMenuRepository implements MenuRepository {
 
 	@Override
 	public void update(Long menuId, MenuDTO menuDTO) {
-		String sql = "update menu set name = ?, price = ?, menu_code = ? where id = ?";
+		String sql = "update menu set name = ?, price = ?, menu_code = ?, total_order = ? where id = ?";
 
-		template.update(sql, menuDTO.getName(), menuDTO.getPrice(), menuDTO.getMenuCode(), menuId);
+		template.update(sql, menuDTO.getName(), menuDTO.getPrice(), menuDTO.getMenuCode(), menuDTO.getTotalOrder(), menuId);
 	}
 
 	@Override
