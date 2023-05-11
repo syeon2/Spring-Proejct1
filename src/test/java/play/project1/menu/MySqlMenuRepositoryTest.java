@@ -14,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import play.project1.domain.menu.Menu;
 import play.project1.repository.menu.MenuRepository;
-import play.project1.repository.menu.dto.MenuDTO;
+import play.project1.service.menu.dto.MenuDTO;
 
 @Transactional
 @SpringBootTest

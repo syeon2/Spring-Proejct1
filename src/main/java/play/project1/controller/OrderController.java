@@ -26,11 +26,3 @@ public class OrderController {
 		}
 	}
 }
-
-@Getter
-@RequiredArgsConstructor
-class Test {
-
-	private String menuId;
-	private List<String> listString;
-}

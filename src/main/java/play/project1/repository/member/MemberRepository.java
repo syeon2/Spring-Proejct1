@@ -1,7 +1,7 @@
 package play.project1.repository.member;
 
 import play.project1.domain.member.Member;
-import play.project1.repository.member.dto.MemberDTO;
+import play.project1.service.member.dto.MemberDTO;
 
 public interface MemberRepository {
 

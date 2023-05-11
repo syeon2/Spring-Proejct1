@@ -15,14 +15,14 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import play.project1.domain.menu.Menu;
-import play.project1.repository.menu.dto.MenuDTO;
+import play.project1.service.menu.dto.MenuDTO;
 
 @Repository
-public class MySQLMenuRepository implements MenuRepository {
+public class JdbcMenuRepository implements MenuRepository {
 
 	private final JdbcTemplate template;
 
-	public MySQLMenuRepository(DataSource dataSource) {
+	public JdbcMenuRepository(DataSource dataSource) {
 		this.template = new JdbcTemplate(dataSource);
 	}
 

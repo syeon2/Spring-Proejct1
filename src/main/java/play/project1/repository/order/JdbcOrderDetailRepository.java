@@ -1,7 +1,6 @@
 package play.project1.repository.order;
 
 import java.sql.PreparedStatement;
-import java.util.List;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -13,7 +12,7 @@ import play.project1.domain.order.OrderDetail;
 
 @Repository
 @RequiredArgsConstructor
-public class MySQLOrderDetailRepository implements OrderDetailRepository {
+public class JdbcOrderDetailRepository implements OrderDetailRepository {
 
 	private final JdbcTemplate template;
 

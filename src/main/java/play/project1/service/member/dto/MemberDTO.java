@@ -1,4 +1,4 @@
-package play.project1.repository.member.dto;
+package play.project1.service.member.dto;
 
 import java.math.BigDecimal;
 
@@ -7,8 +7,8 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public class ChargePointDTO {
+public class MemberDTO {
 
-	private String id;
-	private BigDecimal point;
+	private final String name;
+	private final BigDecimal point;
 }

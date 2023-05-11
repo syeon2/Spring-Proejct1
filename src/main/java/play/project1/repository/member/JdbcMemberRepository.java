@@ -2,25 +2,21 @@ package play.project1.repository.member;
 
 import static play.project1.domain.member.Member.*;
 
-import java.sql.PreparedStatement;
-
 import javax.sql.DataSource;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import play.project1.domain.member.Member;
-import play.project1.repository.member.dto.MemberDTO;
+import play.project1.service.member.dto.MemberDTO;
 
 @Repository
-public class MySQLMemberRepository implements MemberRepository {
+public class JdbcMemberRepository implements MemberRepository {
 
 	private final JdbcTemplate template;
 
-	public MySQLMemberRepository(DataSource dataSource) {
+	public JdbcMemberRepository(DataSource dataSource) {
 		this.template = new JdbcTemplate(dataSource);
 	}
 

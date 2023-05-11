@@ -1,4 +1,4 @@
-package play.project1.repository.menu.dto;
+package play.project1.service.menu.dto;
 
 import java.math.BigDecimal;
 

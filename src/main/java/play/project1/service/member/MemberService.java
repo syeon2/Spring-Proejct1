@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
 import play.project1.domain.member.Member;
 import play.project1.repository.member.MemberRepository;
-import play.project1.repository.member.dto.MemberDTO;
+import play.project1.service.member.dto.MemberDTO;
 
 @Service
 @RequiredArgsConstructor

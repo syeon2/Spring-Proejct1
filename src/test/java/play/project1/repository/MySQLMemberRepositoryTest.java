@@ -11,7 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import play.project1.domain.member.Member;
-import play.project1.repository.member.dto.MemberDTO;
+import play.project1.service.member.dto.MemberDTO;
 import play.project1.repository.member.MemberRepository;
 
 @Transactional

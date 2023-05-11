@@ -12,7 +12,7 @@ import play.project1.domain.order.OrderList;
 
 @Repository
 @RequiredArgsConstructor
-public class MySQLOrderListRepository implements OrderListRepository {
+public class JdbcOrderListRepository implements OrderListRepository {
 
 	private final JdbcTemplate template;
 
