@@ -9,7 +9,8 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
 import play.project1.domain.member.Member;
-import play.project1.service.member.dto.MemberDTO;
+import play.project1.dto.member.MemberSaveDTO;
+import play.project1.dto.member.MemberUpdateDTO;
 
 @Repository
 public class JdbcMemberRepository implements MemberRepository {
@@ -21,12 +22,12 @@ public class JdbcMemberRepository implements MemberRepository {
 	}
 
 	@Override
-	public Member save(Member member) {
+	public Member save(MemberSaveDTO memberSaveDTO) {
 		String sql = "insert into member(id, name) values (?, ?)";
 
-		template.update(sql, member.getId(), member.getName());
+		template.update(sql, memberSaveDTO.getId(),memberSaveDTO.getName());
 
-		return member;
+		return Member.createNewMember(memberSaveDTO.getId(), memberSaveDTO.getName());
 	}
 
 	@Override
@@ -44,7 +45,7 @@ public class JdbcMemberRepository implements MemberRepository {
 	}
 
 	@Override
-	public void update(String memberId, MemberDTO memberDTO) {
+	public void update(String memberId, MemberUpdateDTO memberDTO) {
 		String sql = "update member set name = ?, point = ? where id = ?";
 
 		template.update(sql, memberDTO.getName(), memberDTO.getPoint(), memberId);

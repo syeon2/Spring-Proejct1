@@ -1,5 +1,8 @@
 package play.project1.controller;
 
+import static play.project1.util.constURL.MenuURLConst.*;
+import static play.project1.util.constURL.MenuURLConst.SelectURL.*;
+
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
@@ -15,7 +18,7 @@ import play.project1.domain.menu.Menu;
 import play.project1.service.menu.MenuService;
 
 @RestController
-@RequestMapping("/menu")
+@RequestMapping(BASE_URL)
 @RequiredArgsConstructor
 public class MenuController {
 
@@ -26,7 +29,7 @@ public class MenuController {
 		return menuService.findMenus(name);
 	}
 
-	@GetMapping("/{menuId}")
+	@GetMapping(PATH_ID)
 	public ResponseEntity<Menu> menu(@PathVariable Long menuId) {
 		Menu menu = menuService.findMenu(menuId);
 
@@ -35,7 +38,7 @@ public class MenuController {
 		return new ResponseEntity<>(menu, HttpStatus.OK);
 	}
 
-	@GetMapping("/popular")
+	@GetMapping(POPULAR_MENU)
 	public List<Menu> popularMenu() {
 		return menuService.getRankingList();
 	}

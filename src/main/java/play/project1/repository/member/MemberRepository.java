@@ -1,12 +1,13 @@
 package play.project1.repository.member;
 
 import play.project1.domain.member.Member;
-import play.project1.service.member.dto.MemberDTO;
+import play.project1.dto.member.MemberSaveDTO;
+import play.project1.dto.member.MemberUpdateDTO;
 
 public interface MemberRepository {
 
-	Member save(Member member);
+	Member save(MemberSaveDTO memberSaveDTO);
 	Member findById(String memberId);
-	void update(String memberId, MemberDTO memberDTO);
+	void update(String memberId, MemberUpdateDTO memberDTO);
 	void delete(String memberId);
 }

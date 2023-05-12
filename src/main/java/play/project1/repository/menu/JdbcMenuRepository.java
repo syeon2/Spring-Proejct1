@@ -15,7 +15,8 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import play.project1.domain.menu.Menu;
-import play.project1.service.menu.dto.MenuDTO;
+import play.project1.dto.menu.MenuSaveDTO;
+import play.project1.dto.menu.MenuUpdateDTO;
 
 @Repository
 public class JdbcMenuRepository implements MenuRepository {
@@ -27,21 +28,21 @@ public class JdbcMenuRepository implements MenuRepository {
 	}
 
 	@Override
-	public Menu save(Menu menu) {
+	public Menu save(MenuSaveDTO menuSaveDTO) {
 		String sql = "insert into menu(NAME, MENU_CODE) values (?, ?)";
 
 		KeyHolder keyHolder = new GeneratedKeyHolder();
 		template.update((connection) -> {
 			PreparedStatement ps = connection.prepareStatement(sql, new String[] {ID});
-			ps.setString(1, menu.getName());
-			ps.setInt(2, menu.getMenuCode());
+			ps.setString(1, menuSaveDTO.getName());
+			ps.setInt(2, menuSaveDTO.getMenuCode());
 
 			return ps;
 		}, keyHolder);
 
 		long id = keyHolder.getKey().longValue();
 
-		return new Menu(id, menu.getName(), menu.getMenuCode(), menu.getPrice(), menu.getTotalOrder());
+		return Menu.createNewMenu(id, menuSaveDTO.getName(), menuSaveDTO.getMenuCode());
 	}
 
 	@Override
@@ -59,7 +60,7 @@ public class JdbcMenuRepository implements MenuRepository {
 	}
 
 	@Override
-	public void update(Long menuId, MenuDTO menuDTO) {
+	public void update(Long menuId, MenuUpdateDTO menuDTO) {
 		String sql = "update menu set name = ?, price = ?, menu_code = ?, total_order = ? where id = ?";
 
 		template.update(sql, menuDTO.getName(), menuDTO.getPrice(), menuDTO.getMenuCode(), menuDTO.getTotalOrder(), menuId);

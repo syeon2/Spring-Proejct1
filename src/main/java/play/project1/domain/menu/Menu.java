@@ -2,11 +2,11 @@ package play.project1.domain.menu;
 
 import java.math.BigDecimal;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 
 @Getter
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class Menu {
 
 	public static final String ID = "id";
@@ -20,4 +20,16 @@ public class Menu {
 	private final Integer menuCode;
 	private final BigDecimal price;
 	private final Long totalOrder;
+
+	private Menu(Long id, String name, Integer menuCode) {
+		this.id = id;
+		this.name = name;
+		this.menuCode = menuCode;
+		this.price = BigDecimal.ZERO;
+		this.totalOrder = 0L;
+	}
+
+	public static Menu createNewMenu(Long id, String name, Integer menuCode) {
+		return new Menu(id, name, menuCode);
+	}
 }

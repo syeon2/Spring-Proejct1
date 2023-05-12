@@ -15,13 +15,13 @@ import play.project1.domain.menu.Menu;
 import play.project1.domain.order.OrderDetail;
 import play.project1.domain.order.OrderList;
 import play.project1.repository.member.MemberRepository;
-import play.project1.service.member.dto.MemberDTO;
+import play.project1.dto.member.MemberUpdateDTO;
 import play.project1.repository.menu.MenuRepository;
-import play.project1.service.menu.dto.MenuDTO;
+import play.project1.dto.menu.MenuUpdateDTO;
 import play.project1.repository.order.OrderDetailRepository;
 import play.project1.repository.order.OrderListRepository;
-import play.project1.service.order.dto.OrderDTO;
-import play.project1.service.order.dto.OrderDetailDTO;
+import play.project1.dto.order.OrderRequestDTO;
+import play.project1.dto.order.OrderDetailRequestDTO;
 
 @Service
 @RequiredArgsConstructor
@@ -34,11 +34,11 @@ public class OrderService {
 	private final RedisTemplate<String, Object> redisTemplate;
 
 	@Transactional
-	public void createOrder(OrderDTO orderDTO) {
+	public OrderList createOrder(OrderRequestDTO orderRequestDTO) {
 
 		// 주문한 커피들 모두 조회 -> Map 에 저장
 		Map<Menu, Integer> orderMenu = new HashMap<>();
-		getOrderMenus(orderDTO.getOrderMenuList(), orderMenu);
+		getOrderMenus(orderRequestDTO.getOrderMenuList(), orderMenu);
 
 		// 메뉴 총 주문내역 카운트 + 1 및 메뉴 총 가격 계산
 		Integer menuTotalCount = 0;
@@ -54,20 +54,22 @@ public class OrderService {
 		}
 
 		// 포인트 차감
-		Member member = memberRepository.findById(orderDTO.getMemberId());
+		Member member = memberRepository.findById(orderRequestDTO.getMemberId());
 		minusMemberPoint(totalPrice, member);
 
 		// 주문 리스트 생성
-		Long orderId = createOrderList(menuTotalCount, totalPrice, member);
+		OrderList orderList = createOrderList(menuTotalCount, totalPrice, member);
 
 		// 주문 디테일 생성
-		createOrderDetails(orderMenu, member, orderId);
+		createOrderDetails(orderMenu, member, orderList.getId());
 
 		// redis popular menu count
 		for (Menu menu : orderMenu.keySet()) {
 			Integer menuCount = orderMenu.get(menu);
 			countMenuToRedis(menu, menu.getTotalOrder().intValue() + menuCount);
 		}
+
+		return orderList;
 	}
 
 	private void countMenuToRedis(Menu menu, Integer orderCount) {
@@ -78,10 +80,10 @@ public class OrderService {
 
 		if (member.getPoint().compareTo(totalPrice) < 0) throw new IllegalStateException("포인트가 부족합니다.");
 
-		memberRepository.update(member.getId(), new MemberDTO(member.getName(), member.getPoint().subtract(totalPrice)));
+		memberRepository.update(member.getId(), new MemberUpdateDTO(member.getName(), member.getPoint().subtract(totalPrice)));
 	}
 
-	private Long createOrderList(Integer menuTotalCount, BigDecimal totalPrice, Member member) {
+	private OrderList createOrderList(Integer menuTotalCount, BigDecimal totalPrice, Member member) {
 		return orderListRepository.save(new OrderList(null, member.getId(), menuTotalCount, totalPrice));
 	}
 
@@ -102,12 +104,11 @@ public class OrderService {
 
 	private void updateMenuOrderCount(Menu menu, Integer orderCount, BigDecimal menuPrice) {
 		menuRepository.update(menu.getId(),
-			new MenuDTO(menu.getName(), menuPrice, menu.getMenuCode(), menu.getTotalOrder() + orderCount)
-		);
+			new MenuUpdateDTO(menu.getName(), menu.getPrice(), menu.getMenuCode(), menu.getTotalOrder() + orderCount));
 	}
 
-	private void getOrderMenus(List<OrderDetailDTO> orderMenuList, Map<Menu, Integer> orderMenu) {
-		for (OrderDetailDTO orderDetail : orderMenuList) {
+	private void getOrderMenus(List<OrderDetailRequestDTO> orderMenuList, Map<Menu, Integer> orderMenu) {
+		for (OrderDetailRequestDTO orderDetail : orderMenuList) {
 			Menu menu = menuRepository.findById(orderDetail.getMenuId());
 			orderMenu.put(menu, orderDetail.getCount());
 		}

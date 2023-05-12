@@ -1,13 +1,16 @@
-package play.project1.service.menu.dto;
+package play.project1.dto.menu;
 
 import java.math.BigDecimal;
 
+import javax.validation.constraints.NotNull;
+
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import play.project1.domain.menu.Menu;
 
 @Getter
 @RequiredArgsConstructor
-public class MenuDTO {
+public class MenuUpdateDTO {
 
 	private final String name;
 	private final BigDecimal price;

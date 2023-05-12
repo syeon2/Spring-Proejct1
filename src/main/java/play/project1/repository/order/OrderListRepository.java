@@ -4,6 +4,6 @@ import play.project1.domain.order.OrderList;
 
 public interface OrderListRepository {
 
-	Long save(OrderList orderList);
+	OrderList save(OrderList orderList);
 	void delete(Long orderId);
 }

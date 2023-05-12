@@ -1,33 +1,29 @@
 package play.project1.controller;
 
-import java.math.BigDecimal;
+import static play.project1.util.constURL.MemberURLConst.*;
+import static play.project1.util.constURL.MemberURLConst.UpdateURL.*;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
-import play.project1.service.member.dto.ChargePointDTO;
+import play.project1.dto.member.ChargePointDTO;
 import play.project1.service.member.MemberService;
 
 @RestController
-@RequestMapping("/member")
+@RequestMapping(BASE_URL)
 @RequiredArgsConstructor
 public class MemberController {
 
 	private final MemberService memberService;
 
-	@PostMapping("/charge")
-	public ResponseEntity<Void> chargingPoint(@RequestBody ChargePointDTO chargePointDTO) {
-		BigDecimal point = chargePointDTO.getPoint();
+	@PostMapping(CHARGE_URL)
+	public ChargePointDTO chargePoint(@Validated @RequestBody ChargePointDTO chargePointDTO) {
+		memberService.chargePoint(chargePointDTO);
 
-		if (point.intValue() <= 0) {
-			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-		}
-		memberService.chargePoint(chargePointDTO.getId(), point);
-		return new ResponseEntity<>(HttpStatus.OK);
+		return chargePointDTO;
 	}
 }

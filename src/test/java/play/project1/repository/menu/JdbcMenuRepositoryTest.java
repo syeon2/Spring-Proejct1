@@ -1,4 +1,4 @@
-package play.project1.menu;
+package play.project1.repository.menu;
 
 import static org.assertj.core.api.Assertions.*;
 import static play.project1.domain.menu.Category.*;
@@ -13,14 +13,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import play.project1.domain.menu.Menu;
+import play.project1.dto.menu.MenuSaveDTO;
 import play.project1.repository.menu.MenuRepository;
-import play.project1.service.menu.dto.MenuDTO;
+import play.project1.dto.menu.MenuUpdateDTO;
 
 @Transactional
 @SpringBootTest
-class MySqlMenuRepositoryTest {
-
-	private long sequence = 1L;
+class JdbcMenuRepositoryTest {
 
 	@Autowired
 	private MenuRepository repository;
@@ -30,7 +29,7 @@ class MySqlMenuRepositoryTest {
 	void saveAndFind() {
 		// given
 		String MENU_A = "menuA";
-		Menu menuA = new Menu(sequence++, MENU_A, COFFEE.getMenuCode(), BigDecimal.valueOf(10000), 0L);
+		MenuSaveDTO menuA = new MenuSaveDTO(MENU_A, COFFEE.getMenuCode());
 
 		// // when
 		repository.save(menuA);
@@ -39,7 +38,7 @@ class MySqlMenuRepositoryTest {
 		assertThat(menu.getName()).isEqualTo(MENU_A);
 
 		String updateMenuName = "menuB";
-		repository.update(menu.getId(), new MenuDTO(updateMenuName, BigDecimal.valueOf(20000), COFFEE.getMenuCode(), 0L));
+		repository.update(menu.getId(), new MenuUpdateDTO(updateMenuName, BigDecimal.valueOf(20000), COFFEE.getMenuCode(), 0L));
 		Menu updateMenu = repository.findByName(updateMenuName).get(0);
 		assertThat(updateMenu.getPrice().intValue()).isEqualTo(20000);
 

@@ -17,7 +17,7 @@ public class JdbcOrderListRepository implements OrderListRepository {
 	private final JdbcTemplate template;
 
 	@Override
-	public Long save(OrderList orderList) {
+	public OrderList save(OrderList orderList) {
 		String sql = "insert into order_list(member_id, menu_count, total_price) values (?, ?, ?)";
 
 		KeyHolder keyHolder = new GeneratedKeyHolder();
@@ -30,7 +30,9 @@ public class JdbcOrderListRepository implements OrderListRepository {
 			return ps;
 		}, keyHolder);
 
-		return keyHolder.getKey().longValue();
+		long id = keyHolder.getKey().longValue();
+
+		return new OrderList(id, orderList.getMemberId(), orderList.getMenuCount(), orderList.getTotalPrice());
 	}
 
 	@Override
