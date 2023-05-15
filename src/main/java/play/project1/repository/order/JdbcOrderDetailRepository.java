@@ -5,12 +5,12 @@ import static play.project1.repository.order.sql.OrderSQL.OrderDetail.*;
 import java.sql.PreparedStatement;
 
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import lombok.RequiredArgsConstructor;
 import play.project1.domain.order.OrderDetail;
+import play.project1.util.connection.DBKeyGenerator;
 
 @Repository
 @RequiredArgsConstructor
@@ -20,7 +20,7 @@ public class JdbcOrderDetailRepository implements OrderDetailRepository {
 
 	@Override
 	public void save(OrderDetail orderDetail) {
-		KeyHolder keyHolder = new GeneratedKeyHolder();
+		KeyHolder keyHolder = DBKeyGenerator.getInstance();
 		template.update((con) -> {
 			PreparedStatement ps = con.prepareStatement(INSERT, new String[] {"id"});
 			ps.setLong(1, orderDetail.getOrderId());

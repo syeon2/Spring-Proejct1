@@ -11,13 +11,13 @@ import javax.sql.DataSource;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import play.project1.domain.menu.Menu;
 import play.project1.dto.menu.MenuSaveDTO;
 import play.project1.dto.menu.MenuUpdateDTO;
+import play.project1.util.connection.DBKeyGenerator;
 
 @Repository
 public class JdbcMenuRepository implements MenuRepository {
@@ -30,7 +30,8 @@ public class JdbcMenuRepository implements MenuRepository {
 
 	@Override
 	public Menu save(MenuSaveDTO menuSaveDTO) {
-		KeyHolder keyHolder = new GeneratedKeyHolder();
+		KeyHolder keyHolder = DBKeyGenerator.getInstance();
+
 		template.update((connection) -> {
 			PreparedStatement ps = connection.prepareStatement(INSERT, new String[] {ID});
 			ps.setString(1, menuSaveDTO.getName());

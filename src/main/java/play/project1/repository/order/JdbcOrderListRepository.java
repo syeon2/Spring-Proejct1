@@ -5,12 +5,12 @@ import static play.project1.repository.order.sql.OrderSQL.OrderList.*;
 import java.sql.PreparedStatement;
 
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import lombok.RequiredArgsConstructor;
 import play.project1.domain.order.OrderList;
+import play.project1.util.connection.DBKeyGenerator;
 
 @Repository
 @RequiredArgsConstructor
@@ -20,7 +20,8 @@ public class JdbcOrderListRepository implements OrderListRepository {
 
 	@Override
 	public OrderList save(OrderList orderList) {
-		KeyHolder keyHolder = new GeneratedKeyHolder();
+		KeyHolder keyHolder = DBKeyGenerator.getInstance();
+
 		template.update((connection) -> {
 			PreparedStatement ps = connection.prepareStatement(INSERT, new String[] {"id"});
 			ps.setString(1, orderList.getMemberId());
