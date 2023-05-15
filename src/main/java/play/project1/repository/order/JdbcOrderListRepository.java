@@ -1,5 +1,7 @@
 package play.project1.repository.order;
 
+import static play.project1.repository.order.sql.OrderSQL.OrderList.*;
+
 import java.sql.PreparedStatement;
 
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -18,11 +20,9 @@ public class JdbcOrderListRepository implements OrderListRepository {
 
 	@Override
 	public OrderList save(OrderList orderList) {
-		String sql = "insert into order_list(member_id, menu_count, total_price) values (?, ?, ?)";
-
 		KeyHolder keyHolder = new GeneratedKeyHolder();
 		template.update((connection) -> {
-			PreparedStatement ps = connection.prepareStatement(sql, new String[] {"id"});
+			PreparedStatement ps = connection.prepareStatement(INSERT, new String[] {"id"});
 			ps.setString(1, orderList.getMemberId());
 			ps.setInt(2, orderList.getMenuCount());
 			ps.setBigDecimal(3, orderList.getTotalPrice());
@@ -37,8 +37,6 @@ public class JdbcOrderListRepository implements OrderListRepository {
 
 	@Override
 	public void delete(Long orderId) {
-		String sql = "delete from order_list where id = ?";
-
-		template.update(sql, orderId);
+		template.update(DELETE, orderId);
 	}
 }
