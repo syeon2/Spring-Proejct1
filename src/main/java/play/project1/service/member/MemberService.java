@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
 import play.project1.domain.member.Member;
 import play.project1.dto.member.ChargePointDTO;
+import play.project1.error.exception.order.PointShortageException;
 import play.project1.repository.member.MemberRepository;
 import play.project1.dto.member.MemberUpdateDTO;
 
@@ -30,7 +31,7 @@ public class MemberService {
 
 	public void usePoints(BigDecimal totalPoint, String memberId) {
 		Member member = memberRepository.findById(memberId);
-		if (member.getPoint().compareTo(totalPoint) < 0) throw new IllegalStateException("포인트가 부족합니다.");
+		if (member.getPoint().compareTo(totalPoint) < 0) throw new PointShortageException("포인트가 부족합니다.");
 
 		memberRepository.update(member.getId(), new MemberUpdateDTO(member.getName(), member.getPoint().subtract(totalPoint)));
 	}
