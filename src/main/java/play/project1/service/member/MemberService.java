@@ -27,4 +27,11 @@ public class MemberService {
 
 		memberRepository.update(findMember.getId(), memberDTO);
 	}
+
+	public void usePoints(BigDecimal totalPoint, String memberId) {
+		Member member = memberRepository.findById(memberId);
+		if (member.getPoint().compareTo(totalPoint) < 0) throw new IllegalStateException("포인트가 부족합니다.");
+
+		memberRepository.update(member.getId(), new MemberUpdateDTO(member.getName(), member.getPoint().subtract(totalPoint)));
+	}
 }
