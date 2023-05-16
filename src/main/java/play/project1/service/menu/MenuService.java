@@ -1,5 +1,7 @@
 package play.project1.service.menu;
 
+import static play.project1.util.config.redis.DBKey.*;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -28,9 +30,8 @@ public class MenuService {
 	}
 
 	public List<Menu> getRankingList() {
-		String key = "menu";
 		ZSetOperations<String, String> stringStringZSetOperations = redisTemplate.opsForZSet();
-		Set<String> popularMenuId = stringStringZSetOperations.reverseRange(key, 0, 2);
+		Set<String> popularMenuId = stringStringZSetOperations.reverseRange(MENU, 0, 2);
 
 		List<Menu> menuList = new ArrayList<>();
 		for (String menuId : popularMenuId) {
