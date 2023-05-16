@@ -1,8 +1,5 @@
 package play.project1.controller;
 
-import static play.project1.util.constURL.MemberURLConst.*;
-import static play.project1.util.constURL.MemberURLConst.UpdateURL.*;
-
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -14,13 +11,13 @@ import play.project1.dto.member.ChargePointDTO;
 import play.project1.service.member.MemberService;
 
 @RestController
-@RequestMapping(BASE_URL)
+@RequestMapping("/member")
 @RequiredArgsConstructor
 public class MemberController {
 
 	private final MemberService memberService;
 
-	@PostMapping(CHARGE_URL)
+	@PostMapping("/charge")
 	public ChargePointDTO chargePoint(@Validated @RequestBody ChargePointDTO chargePointDTO) {
 		memberService.chargePoint(chargePointDTO);
 

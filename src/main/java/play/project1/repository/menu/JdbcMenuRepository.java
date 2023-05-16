@@ -1,6 +1,7 @@
 package play.project1.repository.menu;
 
 import static play.project1.domain.menu.Menu.*;
+import static play.project1.repository.menu.sql.MenuSQL.*;
 
 import java.math.BigDecimal;
 import java.sql.PreparedStatement;
@@ -10,13 +11,13 @@ import javax.sql.DataSource;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import play.project1.domain.menu.Menu;
 import play.project1.dto.menu.MenuSaveDTO;
 import play.project1.dto.menu.MenuUpdateDTO;
+import play.project1.util.connection.DBKeyGenerator;
 
 @Repository
 public class JdbcMenuRepository implements MenuRepository {
@@ -29,11 +30,10 @@ public class JdbcMenuRepository implements MenuRepository {
 
 	@Override
 	public Menu save(MenuSaveDTO menuSaveDTO) {
-		String sql = "insert into menu(NAME, MENU_CODE) values (?, ?)";
+		KeyHolder keyHolder = DBKeyGenerator.getInstance();
 
-		KeyHolder keyHolder = new GeneratedKeyHolder();
 		template.update((connection) -> {
-			PreparedStatement ps = connection.prepareStatement(sql, new String[] {ID});
+			PreparedStatement ps = connection.prepareStatement(INSERT, new String[] {ID});
 			ps.setString(1, menuSaveDTO.getName());
 			ps.setInt(2, menuSaveDTO.getMenuCode());
 
@@ -47,30 +47,22 @@ public class JdbcMenuRepository implements MenuRepository {
 
 	@Override
 	public List<Menu> findByName(String name) {
-		String sql = "select * from menu where name like '%" + name + "%'";
-
-		return template.query(sql, menuRowMapper());
+		return template.query(FIND_BY_NAME(name), menuRowMapper());
 	}
 
 	@Override
 	public Menu findById(Long menuId) {
-		String sql = "select * from menu where id = ?";
-
-		return template.queryForObject(sql, menuRowMapper(), menuId);
+		return template.queryForObject(FIND_BY_ID, menuRowMapper(), menuId);
 	}
 
 	@Override
 	public void update(Long menuId, MenuUpdateDTO menuDTO) {
-		String sql = "update menu set name = ?, price = ?, menu_code = ?, total_order = ? where id = ?";
-
-		template.update(sql, menuDTO.getName(), menuDTO.getPrice(), menuDTO.getMenuCode(), menuDTO.getTotalOrder(), menuId);
+		template.update(UPDATE, menuDTO.getName(), menuDTO.getPrice(), menuDTO.getMenuCode(), menuDTO.getTotalOrder(), menuId);
 	}
 
 	@Override
 	public void delete(Long menuId) {
-		String sql = "delete from menu where id = ?";
-
-		template.update(sql, menuId);
+		template.update(DELETE, menuId);
 	}
 
 	private RowMapper<Menu> menuRowMapper() {

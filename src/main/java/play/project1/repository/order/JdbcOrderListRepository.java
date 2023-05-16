@@ -1,14 +1,16 @@
 package play.project1.repository.order;
 
+import static play.project1.repository.order.sql.OrderSQL.OrderList.*;
+
 import java.sql.PreparedStatement;
 
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import lombok.RequiredArgsConstructor;
 import play.project1.domain.order.OrderList;
+import play.project1.util.connection.DBKeyGenerator;
 
 @Repository
 @RequiredArgsConstructor
@@ -18,11 +20,10 @@ public class JdbcOrderListRepository implements OrderListRepository {
 
 	@Override
 	public OrderList save(OrderList orderList) {
-		String sql = "insert into order_list(member_id, menu_count, total_price) values (?, ?, ?)";
+		KeyHolder keyHolder = DBKeyGenerator.getInstance();
 
-		KeyHolder keyHolder = new GeneratedKeyHolder();
 		template.update((connection) -> {
-			PreparedStatement ps = connection.prepareStatement(sql, new String[] {"id"});
+			PreparedStatement ps = connection.prepareStatement(INSERT, new String[] {"id"});
 			ps.setString(1, orderList.getMemberId());
 			ps.setInt(2, orderList.getMenuCount());
 			ps.setBigDecimal(3, orderList.getTotalPrice());
@@ -37,8 +38,6 @@ public class JdbcOrderListRepository implements OrderListRepository {
 
 	@Override
 	public void delete(Long orderId) {
-		String sql = "delete from order_list where id = ?";
-
-		template.update(sql, orderId);
+		template.update(DELETE, orderId);
 	}
 }

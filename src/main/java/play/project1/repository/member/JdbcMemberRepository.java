@@ -1,6 +1,7 @@
 package play.project1.repository.member;
 
 import static play.project1.domain.member.Member.*;
+import static play.project1.repository.member.sql.MemberSQL.*;
 
 import javax.sql.DataSource;
 
@@ -23,18 +24,14 @@ public class JdbcMemberRepository implements MemberRepository {
 
 	@Override
 	public Member save(MemberSaveDTO memberSaveDTO) {
-		String sql = "insert into member(id, name) values (?, ?)";
-
-		template.update(sql, memberSaveDTO.getId(),memberSaveDTO.getName());
+		template.update(INSERT, memberSaveDTO.getId(),memberSaveDTO.getName());
 
 		return Member.createNewMember(memberSaveDTO.getId(), memberSaveDTO.getName());
 	}
 
 	@Override
 	public Member findById(String memberId) {
-		String sql = "select * from member where id = ?";
-
-		return template.queryForObject(sql, memberRowMapper(), memberId);
+		return template.queryForObject(FIND_BY_ID, memberRowMapper(), memberId);
 	}
 
 	private RowMapper<Member> memberRowMapper() {
@@ -46,15 +43,11 @@ public class JdbcMemberRepository implements MemberRepository {
 
 	@Override
 	public void update(String memberId, MemberUpdateDTO memberDTO) {
-		String sql = "update member set name = ?, point = ? where id = ?";
-
-		template.update(sql, memberDTO.getName(), memberDTO.getPoint(), memberId);
+		template.update(UPDATE, memberDTO.getName(), memberDTO.getPoint(), memberId);
 	}
 
 	@Override
 	public void delete(String memberId) {
-		String sql = "delete from member where id = ?";
-
-		template.update(sql, memberId);
+		template.update(DELETE, memberId);
 	}
 }
