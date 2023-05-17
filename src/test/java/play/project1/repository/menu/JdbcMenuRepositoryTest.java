@@ -10,15 +10,14 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.test.context.jdbc.Sql;
 
 import play.project1.domain.menu.Menu;
 import play.project1.dto.menu.MenuSaveDTO;
-import play.project1.repository.menu.MenuRepository;
 import play.project1.dto.menu.MenuUpdateDTO;
 
-@Transactional
 @SpringBootTest
+@Sql(scripts = {"classpath:schema_mysql.sql"})
 class JdbcMenuRepositoryTest {
 
 	@Autowired

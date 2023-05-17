@@ -1,16 +1,16 @@
 package play.project1.repository.order;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.jdbc.Sql;
 
 import play.project1.domain.order.OrderDetail;
 
-// @Transactional
 @SpringBootTest
+@Sql(scripts = {"classpath:schema_mysql.sql"})
 class MySQLOrderDetailRepositoryTest {
 
 	@Autowired

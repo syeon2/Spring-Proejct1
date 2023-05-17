@@ -15,9 +15,9 @@ public class ChargePointDTO {
 
 	@NotNull
 	@Email
-	private String id;
+	private final String id;
 
 	@NotNull
 	@Min(0)
-	private BigDecimal point;
+	private final BigDecimal point;
 }

@@ -5,11 +5,13 @@ import java.math.BigDecimal;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.jdbc.Sql;
+import org.springframework.transaction.annotation.Transactional;
 
 import play.project1.domain.order.OrderList;
 
-// @Transactional
 @SpringBootTest
+@Sql(scripts = {"classpath:schema_mysql.sql"})
 class MySQLOrderListRepositoryTest {
 
 	@Autowired
@@ -20,9 +22,9 @@ class MySQLOrderListRepositoryTest {
 		// save
 		String memberId = "4568ksy@naver.com";
 		OrderList order = new OrderList(1L, memberId, 1, BigDecimal.valueOf(4000));
-		Long orderId = orderListRepository.save(order);
+		OrderList orderList = orderListRepository.save(order);
 
 		// delete
-		orderListRepository.delete(orderId);
+		orderListRepository.delete(order.getId());
 	}
 }
