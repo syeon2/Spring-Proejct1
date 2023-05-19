@@ -22,17 +22,13 @@ public class MenuController {
 	private final MenuService menuService;
 
 	@GetMapping
-	public List<Menu> menuList(@RequestParam String name) {
+	public List<Menu> menuList(String name) {
 		return menuService.findMenus(name);
 	}
 
 	@GetMapping("/{menuId}")
-	public ResponseEntity<Menu> menu(@PathVariable Long menuId) {
-		Menu menu = menuService.findMenu(menuId);
-
-		if (menu == null) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-
-		return new ResponseEntity<>(menu, HttpStatus.OK);
+	public Menu menu(@PathVariable Long menuId) {
+		return menuService.findMenu(menuId);
 	}
 
 	@GetMapping("/popular")

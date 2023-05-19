@@ -10,7 +10,6 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @Getter
-@RequiredArgsConstructor
 public class OrderRequestDTO {
 
 	@Email
@@ -18,4 +17,12 @@ public class OrderRequestDTO {
 	private String memberId;
 
 	private List<OrderDetailRequestDTO> orderMenuList;
+
+	public OrderRequestDTO() {
+	}
+
+	public OrderRequestDTO(String memberId, List<OrderDetailRequestDTO> orderMenuList) {
+		this.memberId = memberId;
+		this.orderMenuList = orderMenuList;
+	}
 }

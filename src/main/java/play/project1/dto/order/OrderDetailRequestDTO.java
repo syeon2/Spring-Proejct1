@@ -7,7 +7,6 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @Getter
-@RequiredArgsConstructor
 public class OrderDetailRequestDTO {
 
 	@NotNull
@@ -15,4 +14,12 @@ public class OrderDetailRequestDTO {
 
 	@Min(1) @NotNull
 	private Integer count;
+
+	public OrderDetailRequestDTO() {
+	}
+
+	public OrderDetailRequestDTO(Long menuId, Integer count) {
+		this.menuId = menuId;
+		this.count = count;
+	}
 }
