@@ -32,7 +32,7 @@ public class MemberService {
 		memberRepository.update(findMember.getId(), memberDTO);
 	}
 
-	@Transactional(isolation = Isolation.REPEATABLE_READ)
+	@Transactional
 	public void usePoints(BigDecimal totalPoint, String memberId) {
 		Member member = memberRepository.findById(memberId);
 		if (member.getPoint().compareTo(totalPoint) < 0) throw new PointShortageException("포인트가 부족합니다.");

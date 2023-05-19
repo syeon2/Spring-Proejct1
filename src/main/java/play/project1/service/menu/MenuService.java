@@ -8,7 +8,11 @@ import java.util.Set;
 
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import play.project1.domain.menu.Menu;
@@ -16,6 +20,7 @@ import play.project1.dto.menu.MenuUpdateDTO;
 import play.project1.repository.menu.MenuRepository;
 
 @Service
+@EnableAsync
 @RequiredArgsConstructor
 public class MenuService {
 
@@ -30,9 +35,12 @@ public class MenuService {
 		return menuRepository.findById(menuId);
 	}
 
+
+	@Async
+	@Transactional
 	public void addTotalCount(Menu menu, Integer orderCount) {
-		menuRepository.update(menu.getId(),
-			new MenuUpdateDTO(menu.getName(), menu.getPrice(), menu.getMenuCode(), menu.getTotalOrder() + orderCount));
+		Menu updateMenu = menuRepository.findById(menu.getId());
+		menuRepository.update(updateMenu.getId(), MenuUpdateDTO.addTotalCount(updateMenu, orderCount));
 	}
 
 	public List<Menu> getRankingList() {

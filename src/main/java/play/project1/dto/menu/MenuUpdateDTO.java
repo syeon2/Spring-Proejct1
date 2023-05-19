@@ -16,4 +16,8 @@ public class MenuUpdateDTO {
 	private final BigDecimal price;
 	private final Integer menuCode;
 	private final Long totalOrder;
+
+	public static MenuUpdateDTO addTotalCount(Menu menu, Integer addCount) {
+		return new MenuUpdateDTO(menu.getName(), menu.getPrice(), menu.getMenuCode(), menu.getTotalOrder() + addCount);
+	}
 }

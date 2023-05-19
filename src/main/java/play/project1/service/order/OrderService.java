@@ -75,7 +75,7 @@ public class OrderService {
 
 	public void updateTotalMenuCount(Map<Menu, Integer> orderMenu) {
 		for (Menu menu : orderMenu.keySet()) {
-			executorService.submit(() -> menuService.addTotalCount(menu, orderMenu.get(menu)));
+			menuService.addTotalCount(menu, orderMenu.get(menu));
 			menuService.countMenuToRedis(menu, menu.getTotalOrder().intValue() + orderMenu.get(menu));
 		}
 	}

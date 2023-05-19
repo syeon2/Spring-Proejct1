@@ -9,24 +9,23 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
+import lombok.RequiredArgsConstructor;
 import play.project1.domain.menu.Menu;
 import play.project1.dto.menu.MenuSaveDTO;
 import play.project1.dto.menu.MenuUpdateDTO;
 import play.project1.util.connection.DBKeyGenerator;
 
 @Repository
+@RequiredArgsConstructor
 public class JdbcMenuRepository implements MenuRepository {
 
 	private final JdbcTemplate template;
-
-	public JdbcMenuRepository(DataSource dataSource) {
-		this.template = new JdbcTemplate(dataSource);
-	}
 
 	@Override
 	public Menu save(MenuSaveDTO menuSaveDTO) {

@@ -4,6 +4,9 @@ import static org.assertj.core.api.Assertions.*;
 import static play.project1.domain.menu.Category.*;
 
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -62,12 +65,6 @@ class MenuServiceTest {
     @DisplayName("메뉴 아이디로 메뉴 조회")
     void findMenuById() {
         // given
-        assertThatThrownBy(() -> menuRepository.findById(1L))
-            .isInstanceOf(EmptyResultDataAccessException.class);
-        assertThatThrownBy(() -> menuRepository.findById(2L))
-            .isInstanceOf(EmptyResultDataAccessException.class);
-
-        // when
         MenuSaveDTO menuA = new MenuSaveDTO(MENU_A, 1); // ID = 1
         MenuSaveDTO menuB = new MenuSaveDTO(MENU_B, 1); // ID = 2
         MenuSaveDTO menuC = new MenuSaveDTO(MENU_C, 1); // ID = 3
@@ -76,6 +73,7 @@ class MenuServiceTest {
         menuRepository.save(menuB);
         menuRepository.save(menuC);
 
+        // when
         Menu findMenuA = menuService.findMenu(1L);
         Menu findMenuB = menuService.findMenu(2L);
         Menu findMenuC = menuService.findMenu(3L);
@@ -84,5 +82,70 @@ class MenuServiceTest {
         assertThat(findMenuA.getName()).isEqualTo(MENU_A);
         assertThat(findMenuB.getName()).isEqualTo(MENU_B);
         assertThat(findMenuC.getName()).isEqualTo(MENU_C);
+    }
+
+    @Test
+    @DisplayName("메뉴 없을 때 메뉴 아이디로 조회시 에러 반환")
+    void findMenuByIdException() {
+        assertThatThrownBy(() -> menuRepository.findById(1L))
+            .isInstanceOf(EmptyResultDataAccessException.class);
+        assertThatThrownBy(() -> menuRepository.findById(2L))
+            .isInstanceOf(EmptyResultDataAccessException.class);
+    }
+
+    @Test
+    @DisplayName("메뉴 비동기 카운트 1")
+    void addTotalCountAsync() throws InterruptedException {
+        // given
+        MenuSaveDTO menuA = new MenuSaveDTO(MENU_A, 1);
+        menuRepository.save(menuA);
+
+        // when
+        Menu findMenuA = menuRepository.findById(1L);
+        assertThat(findMenuA.getName()).isEqualTo(MENU_A);
+
+        menuService.addTotalCount(findMenuA, 1);
+
+        // 비동기 처리
+        Thread.sleep(1000);
+
+        // then
+        Menu updateMenuA = menuRepository.findById(1L);
+
+        assertThat(updateMenuA.getTotalOrder()).isEqualTo(1);
+    }
+
+    @Test
+    @DisplayName("메뉴 비동기 카운트 10000")
+    void addTotalCountAsync2() throws InterruptedException {
+        // given
+        MenuSaveDTO menuA = new MenuSaveDTO(MENU_A, 1);
+        menuRepository.save(menuA);
+
+        // when
+        Menu findMenuA = menuRepository.findById(1L);
+        assertThat(findMenuA.getName()).isEqualTo(MENU_A);
+
+        int count = 10000;
+        ExecutorService service = Executors.newFixedThreadPool(30);
+        CountDownLatch latch = new CountDownLatch(count);
+
+        for (int i = 0; i < count; i++) {
+            service.submit(() -> {
+                try {
+                    menuService.addTotalCount(findMenuA, 1);
+                } finally {
+                    latch.countDown();
+                }
+            });
+        }
+
+        latch.await();
+        // 비동기 처리
+        Thread.sleep(1000);
+
+        // then
+        Menu updateMenuA = menuRepository.findById(1L);
+        assertThat(updateMenuA.getTotalOrder()).isEqualTo(count);
     }
 }
