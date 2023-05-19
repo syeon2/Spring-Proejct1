@@ -6,18 +6,27 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
 @Getter
-@RequiredArgsConstructor
 public class ChargePointDTO {
 
 	@NotNull
 	@Email
-	private final String id;
+	private String id;
 
 	@NotNull
 	@Min(0)
-	private final BigDecimal point;
+	private BigDecimal point;
+
+	public ChargePointDTO() {
+	}
+
+	public ChargePointDTO(String id, BigDecimal point) {
+		this.id = id;
+		this.point = point;
+	}
 }

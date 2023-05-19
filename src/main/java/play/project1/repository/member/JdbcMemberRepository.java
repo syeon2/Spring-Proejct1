@@ -3,24 +3,20 @@ package play.project1.repository.member;
 import static play.project1.domain.member.Member.*;
 import static play.project1.repository.member.sql.MemberSQL.*;
 
-import javax.sql.DataSource;
-
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
+import lombok.RequiredArgsConstructor;
 import play.project1.domain.member.Member;
 import play.project1.dto.member.MemberSaveDTO;
 import play.project1.dto.member.MemberUpdateDTO;
 
 @Repository
+@RequiredArgsConstructor
 public class JdbcMemberRepository implements MemberRepository {
 
 	private final JdbcTemplate template;
-
-	public JdbcMemberRepository(DataSource dataSource) {
-		this.template = new JdbcTemplate(dataSource);
-	}
 
 	@Override
 	public Member save(MemberSaveDTO memberSaveDTO) {
