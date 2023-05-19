@@ -40,9 +40,9 @@ class MenuServiceTest {
     @DisplayName("메뉴 이름으로 테이블 조회")
     void findMenus() {
         // given
-        menuRepository.save(new MenuSaveDTO(MENU_A, COFFEE.getMenuCode()));
-        menuRepository.save(new MenuSaveDTO(MENU_B, COFFEE.getMenuCode()));
-        menuRepository.save(new MenuSaveDTO(MENU_C, COFFEE.getMenuCode()));
+        menuRepository.save(new MenuSaveDTO(MENU_A, COFFEE.getMenuCode(), 4000));
+        menuRepository.save(new MenuSaveDTO(MENU_B, COFFEE.getMenuCode(), 4000));
+        menuRepository.save(new MenuSaveDTO(MENU_C, COFFEE.getMenuCode(), 4000));
 
         // when
         List<Menu> findMenusLatte = menuService.findMenus(MENU);
@@ -66,9 +66,9 @@ class MenuServiceTest {
     @DisplayName("메뉴 아이디로 메뉴 조회")
     void findMenuById() {
         // given
-        MenuSaveDTO menuA = new MenuSaveDTO(MENU_A, 1); // ID = 1
-        MenuSaveDTO menuB = new MenuSaveDTO(MENU_B, 1); // ID = 2
-        MenuSaveDTO menuC = new MenuSaveDTO(MENU_C, 1); // ID = 3
+        MenuSaveDTO menuA = new MenuSaveDTO(MENU_A, 1, 4000); // ID = 1
+        MenuSaveDTO menuB = new MenuSaveDTO(MENU_B, 1, 4000); // ID = 2
+        MenuSaveDTO menuC = new MenuSaveDTO(MENU_C, 1, 4000); // ID = 3
 
         menuRepository.save(menuA);
         menuRepository.save(menuB);
@@ -98,7 +98,7 @@ class MenuServiceTest {
     @DisplayName("메뉴 비동기 카운트 1")
     void addTotalCountAsync() throws InterruptedException {
         // given
-        MenuSaveDTO menuA = new MenuSaveDTO(MENU_A, 1);
+        MenuSaveDTO menuA = new MenuSaveDTO(MENU_A, 1, 4000);
         menuRepository.save(menuA);
 
         // when
@@ -121,7 +121,7 @@ class MenuServiceTest {
     @DisplayName("메뉴 비동기 카운트 10000")
     void addTotalCountAsync2() throws InterruptedException {
         // given
-        MenuSaveDTO menuA = new MenuSaveDTO(MENU_A, 1);
+        MenuSaveDTO menuA = new MenuSaveDTO(MENU_A, 1, 4000);
         menuRepository.save(menuA);
 
         // when

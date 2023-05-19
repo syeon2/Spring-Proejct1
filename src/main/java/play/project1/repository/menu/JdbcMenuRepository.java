@@ -35,6 +35,7 @@ public class JdbcMenuRepository implements MenuRepository {
 			PreparedStatement ps = connection.prepareStatement(INSERT, new String[] {ID});
 			ps.setString(1, menuSaveDTO.getName());
 			ps.setInt(2, menuSaveDTO.getMenuCode());
+			ps.setInt(3, menuSaveDTO.getPrice());
 
 			return ps;
 		}, keyHolder);

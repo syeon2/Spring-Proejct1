@@ -28,7 +28,7 @@ class JdbcMenuRepositoryTest {
 	void saveAndFind() {
 		// given
 		String MENU_A = "menuA";
-		MenuSaveDTO menuA = new MenuSaveDTO(MENU_A, COFFEE.getMenuCode());
+		MenuSaveDTO menuA = new MenuSaveDTO(MENU_A, COFFEE.getMenuCode(), 4000);
 
 		// // when
 		repository.save(menuA);
