@@ -1,11 +1,9 @@
 package play.project1.repository.order;
 
-import java.util.List;
-
-import play.project1.domain.order.OrderDetail;
+import play.project1.dto.order.OrderDetailSaveDTO;
 
 public interface OrderDetailRepository {
 
-	void save(OrderDetail orderDetails);
+	void save(OrderDetailSaveDTO orderDetails);
 	void delete(Long orderId);
 }

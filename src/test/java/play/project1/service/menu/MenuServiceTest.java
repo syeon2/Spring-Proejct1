@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -104,10 +105,11 @@ class MenuServiceTest {
         Menu findMenuA = menuRepository.findById(1L);
         assertThat(findMenuA.getName()).isEqualTo(MENU_A);
 
+        CountDownLatch latch = new CountDownLatch(1);
+
         menuService.addTotalCount(findMenuA, 1);
 
-        // 비동기 처리
-        Thread.sleep(1000);
+        Thread.sleep(500);
 
         // then
         Menu updateMenuA = menuRepository.findById(1L);
@@ -141,8 +143,6 @@ class MenuServiceTest {
         }
 
         latch.await();
-        // 비동기 처리
-        Thread.sleep(1000);
 
         // then
         Menu updateMenuA = menuRepository.findById(1L);

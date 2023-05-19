@@ -25,8 +25,6 @@ public class OrderController {
 	public OrderList order(@Validated @RequestBody OrderRequestDTO orderRequestDTO) {
 		Map<Menu, Integer> orderMenusAndCount = orderService.getOrderMenusAndCount(orderRequestDTO.getOrderMenuList());
 
-		orderService.updateTotalMenuCount(orderMenusAndCount);
-
 		return orderService.createOrder(orderMenusAndCount, orderRequestDTO);
 	}
 }

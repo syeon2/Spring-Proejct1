@@ -4,28 +4,26 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import play.project1.domain.member.Member;
 import play.project1.domain.menu.Menu;
-import play.project1.domain.order.OrderDetail;
 import play.project1.domain.order.OrderList;
 import play.project1.dto.order.OrderDetailRequestDTO;
+import play.project1.dto.order.OrderDetailSaveDTO;
+import play.project1.dto.order.OrderListSaveDTO;
 import play.project1.dto.order.OrderRequestDTO;
 import play.project1.repository.order.OrderDetailRepository;
 import play.project1.repository.order.OrderListRepository;
 import play.project1.service.member.MemberService;
 import play.project1.service.menu.MenuService;
-import play.project1.util.executor.AsyncThreadPool;
 
-@Slf4j
 @Service
+@EnableAsync
 @RequiredArgsConstructor
 public class OrderService {
 
@@ -34,32 +32,44 @@ public class OrderService {
 	private final MemberService memberService;
 	private final MenuService menuService;
 
-	private final ExecutorService executorService;
+	private final TransactionTemplate txTemplate;
 
-	@Transactional
 	public OrderList createOrder(Map<Menu, Integer> orderMenu, OrderRequestDTO orderRequestDTO) {
-		// 메뉴 총 주문내역 카운트 + 1 및 메뉴 총 가격 계산
-		Integer menuTotalCount = 0;
-		BigDecimal totalPrice = BigDecimal.ZERO;
+		return txTemplate.execute((status) -> {
+			Integer menuTotalCount = 0;
+			BigDecimal totalPrice = BigDecimal.ZERO;
 
-		for (Menu menu : orderMenu.keySet()) {
-			Integer orderCount = orderMenu.get(menu);
-			BigDecimal menuPrice = menu.getPrice().multiply(BigDecimal.valueOf(orderCount));
+			for (Menu menu : orderMenu.keySet()) {
+				Integer orderCount = orderMenu.get(menu);
+				BigDecimal menuPrice = menu.getPrice().multiply(BigDecimal.valueOf(orderCount));
 
-			totalPrice = totalPrice.add(menuPrice);
-			menuTotalCount += orderMenu.get(menu);
-		}
+				totalPrice = totalPrice.add(menuPrice);
+				menuTotalCount += orderMenu.get(menu);
+			}
 
-		// 포인트 차감
-		memberService.usePoints(totalPrice, orderRequestDTO.getMemberId());
+			for (Menu menu : orderMenu.keySet()) {
+				try {
+					menuService.addTotalCount(menu, orderMenu.get(menu));
+				} catch (Throwable e) {
+					status.setRollbackOnly();
+				}
+				menuService.countMenuToRedis(menu, menu.getTotalOrder().intValue() + orderMenu.get(menu));
+			}
+			// 포인트 차감
+			memberService.usePoints(totalPrice, orderRequestDTO.getMemberId());
 
-		// 주문 리스트 생성
-		OrderList orderList = createOrderList(menuTotalCount, totalPrice, orderRequestDTO.getMemberId());
+			// 주문 리스트 생성
+			OrderList orderList = createOrderList(menuTotalCount, totalPrice, orderRequestDTO.getMemberId());
 
-		// 주문 디테일 생성
-		createOrderDetails(orderMenu, orderRequestDTO.getMemberId(), orderList.getId());
+			// 주문 디테일 생성
+			try {
+				createOrderDetails(orderMenu, orderRequestDTO.getMemberId(), orderList.getId());
+			} catch (Throwable e) {
+				status.setRollbackOnly();
+			}
 
-		return orderList;
+			return orderList;
+		});
 	}
 
 	public Map<Menu, Integer> getOrderMenusAndCount(List<OrderDetailRequestDTO> orderDetailRequestDTOList) {
@@ -73,27 +83,17 @@ public class OrderService {
 		return orderMenu;
 	}
 
-	public void updateTotalMenuCount(Map<Menu, Integer> orderMenu) {
-		for (Menu menu : orderMenu.keySet()) {
-			menuService.addTotalCount(menu, orderMenu.get(menu));
-			menuService.countMenuToRedis(menu, menu.getTotalOrder().intValue() + orderMenu.get(menu));
-		}
-	}
-
 	private OrderList createOrderList(Integer menuTotalCount, BigDecimal totalPrice, String memberId) {
-		return orderListRepository.save(new OrderList(null, memberId, menuTotalCount, totalPrice));
+		return orderListRepository.save(new OrderListSaveDTO(memberId, menuTotalCount, totalPrice));
 	}
 
-	private void createOrderDetails(Map<Menu, Integer> orderMenu, String memberId, Long orderId) {
+	@Async
+	public void createOrderDetails(Map<Menu, Integer> orderMenu, String memberId, Long orderId) {
 		for (Menu menu : orderMenu.keySet()) {
-			executorService.submit(() -> {
-				Integer menuCount = orderMenu.get(menu);
-				BigDecimal sameMenuTotalPrice = menu.getPrice().multiply(BigDecimal.valueOf(orderMenu.get(menu)));
+			Integer menuCount = orderMenu.get(menu);
+			BigDecimal sameMenuTotalPrice = menu.getPrice().multiply(BigDecimal.valueOf(orderMenu.get(menu)));
 
-				orderDetailRepository.save(
-					new OrderDetail(null, orderId, memberId, menu.getId(), menuCount, sameMenuTotalPrice)
-				);
-			});
+			orderDetailRepository.save(new OrderDetailSaveDTO(orderId, memberId, menu.getId(), menuCount, sameMenuTotalPrice));
 		}
 	}
 }
